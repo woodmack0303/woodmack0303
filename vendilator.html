@@ -1,0 +1,179 @@
+<html>
+
+<head>
+	<script type="text/javascript" src="./vendilator_lib.js"></script>
+	<script type="text/javascript" src="./constants.js"></script>
+	<link rel="stylesheet" href="mystyle.css">
+</head>
+
+<!-- Left to do 
+	TODO// error handling, when row is clicked the doesn't matter which numeric value is clicked
+			everything counts towards the row. disable the correct rows depending on which row is clicked
+
+	what I feel like I could've messed up on, is keeping track of the items that have been vended but i'm not entirely sure
+		-->
+
+<body>
+	<h1>Coding Test</h1>
+	<p>By: Mackenzie Wood</p>
+
+
+	<!-- Creating buttons
+		these buttons are used to display the values of the vending machine as well
+		as the coins the the user used to make the purchase
+	-->
+	<div id="coins">
+		<input id="nickel" type="button" onclick="myMoney(COINS.NICKEL)" value="Nickle">
+		<input id="dime" type="button" onclick="myMoney(COINS.DIME)" value="Dime">
+		<input id="quarter" type="button" onclick="myMoney(COINS.QUARTER)" value="Quarter">
+		<span>
+			<p>Purse:
+			<p id="purse">0.00</p>
+		</span>
+		</br></br>
+	</div>
+
+	<div id="button_grouping_a">
+		<input id="A" type="button" onclick="clickedButton(BUTTONS.ROWA)" value="A">
+		<input id="one" type="button" onclick="clickedButton(BUTTONS.COLUMN1)" value="1">
+		<input id="two" type="button" onclick="clickedButton(BUTTONS.COLUMN2)" value="2">
+		<input id="three" type="button" onclick="clickedButton(BUTTONS.COLUMN3)" value="3">
+		<input id="four" type="button" onclick="clickedButton(BUTTONS.COLUMN4)" value="4">
+		<input id="five" type="button" onclick="clickedButton(BUTTONS.COLUMN5)" value="5">
+		</br></br>
+	</div>
+	<div id="button_grouping_b">
+		<input id="B" type="button" onclick="clickedButton(BUTTONS.ROWB)" value="B">
+		<input type="button" onclick="clickedButton(BUTTONS.COLUMN1)" value="1">
+		<input type="button" onclick="clickedButton(BUTTONS.COLUMN2)" value="2">
+		<input type="button" onclick="clickedButton(BUTTONS.COLUMN3)" value="3">
+		<input type="button" onclick="clickedButton(BUTTONS.COLUMN4)" value="4">
+		<input type="button" onclick="clickedButton(BUTTONS.COLUMN5)" value="5">
+		</br></br>
+	</div>
+	<div id="button_grouping_c">
+		<input id="C" type="button" onclick="myFunction(BUTTONS.ROWC)" value="C">
+		<input type="button" onclick="clickedButton(BUTTONS.COLUMN1)" value="1">
+		<input type="button" onclick="clickedButton(BUTTONS.COLUMN2)" value="2">
+		<input type="button" onclick="clickedButton(BUTTONS.COLUMN3)" value="3">
+		<input type="button" onclick="clickedButton(BUTTONS.COLUMN4)" value="4">
+		<input type="button" onclick="clickedButton(BUTTONS.COLUMN5)" value="5">
+		</br></br>
+	</div>
+	<div>
+		<input id="CANCEL" type="button" onclick="clickedButton(BUTTONS.CANCEL)" value="CANCEL">
+	</div>
+
+
+	<script type="text/javascript">
+		// which row the user has selected
+		var rowValue = undefined;
+		// cost of the product from the row the user selected
+		var cost = 0.00;
+		//money the user has 
+		var currentMoney = 0.00;
+		var vending = true;
+
+		// I wasn't exactly sure what was required for the output location. so i left this null though i know it shouldn't be
+		init(null, document);
+
+		//main event loop for vending machine
+		// I made the program react to the inputs that are from vendilator_lib.js. 
+		// I did not store transactions or make unit tests to display the individual workings of the code
+		// i'm don't have experiance automating anything so i did my best
+		while (vending) {
+			if (getInput()) {
+				try {
+					switch (getInput().type) {
+						case "button":
+							switch (getInput().value) {
+								case BUTTONS.ROWA: document.getElementById(BUTTONS.ROWA).click();
+									break;
+								case BUTTONS.ROWB: document.getElementById(BUTTONS.ROWB).click();
+									break;
+								case BUTTONS.ROWC: document.getElementById(BUTTONS.ROWC).click();
+									break;
+								case BUTTONS.COLUMN1: document.getElementById("one").click();
+									break;
+								case BUTTONS.COLUMN2: document.getElementById("two").click();
+									break;
+								case BUTTONS.COLUMN3: document.getElementById("three").click();
+									break;
+								case BUTTONS.COLUMN4: document.getElementById("four").click();
+									break;
+								case BUTTONS.COLUMN5: document.getElementById("five").click();
+									break;
+								case BUTTONS.CANCEL: document.getElementById(BUTTONS.CANCEL).click();
+									break;
+								default: ;
+							}
+							break;
+						case "coin":
+							switch (getInput().value) {
+								case COINS.NICKEL: document.getElementById("nickel").click();
+									break;
+								case COINS.DIME: document.getElementById("dime").click();
+									break;
+								case COINS.QUARTER: document.getElementById("quarter").click();
+									break;
+							}
+							break;
+					}
+				} catch (err) {//just catching the error so an error isn't being thrown. not doing anything with the catch
+				}
+			} else {
+				vending = false;
+			}
+		}
+
+		// gets the row the user has selected and the value of the row.
+		// checks the cost of product vs the amount of money the user has
+		function clickedButton(value) {
+			switch (value) {
+				case BUTTONS.ROWA: rowValue = BUTTONS.ROWA;
+					break;
+				case BUTTONS.ROWB: rowValue = BUTTONS.ROWB;
+					break;
+				case BUTTONS.ROWC: rowValue = BUTTONS.ROWC;
+					break;
+				case "CANCEL": returnCurrency(currentMoney.toFixed(2)),
+					rowValue = undefined,
+					currentMoney = 0.00,
+					document.getElementById("purse").innerHTML = currentMoney;
+					break;
+			}
+
+			if (!isNaN(value)) {
+				if (rowValue != undefined) {
+					switch (rowValue) {
+						case BUTTONS.ROWA: cost = ROWPRICE.A;
+							break;
+						case BUTTONS.ROWB: cost = ROWPRICE.B;
+							break;
+						case BUTTONS.ROWC: cost = ROWPRICE.C;
+							break;
+					}
+					let transactions = [];
+					transactions
+					if (cost > currentMoney) {
+						print("not enough funds to purchase this product");
+					} else {
+						let overPaid = currentMoney - cost;
+						vend(rowValue + value);
+						returnCurrency(overPaid.toFixed(2));
+					}
+				}
+			}
+		}
+
+		// function to show the user how much current money they have given the vending machine
+		function myMoney(value) {
+			currentMoney += value;
+			currentMoney = parseFloat(currentMoney.toFixed(2));
+			document.getElementById("purse").value = currentMoney.toFixed(2);
+			document.getElementById("purse").innerHTML = currentMoney.toFixed(2);
+		}
+	</script>
+</body>
+
+</html>
